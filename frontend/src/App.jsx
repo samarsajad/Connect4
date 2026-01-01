@@ -3,19 +3,21 @@ import { connectSocket } from "./socket";
 import GameBoard from "./gameBoard";
 import "./App.css";
 
+const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
+
 let socket;
 let playerSymbol;
 let currentGameId;
 
 function fetchLeaderboard(setLeaderboard) {
-  fetch("http://localhost:3001/leaderboard")
+  fetch(`${API_URL}/leaderboard`)
     .then(res => res.ok ? res.json() : Promise.reject())
     .then(data => Array.isArray(data) && setLeaderboard(data))
     .catch(() => {});
 }
 
 function fetchAnalytics(setAnalytics) {
-  fetch("http://localhost:3001/analytics")
+  fetch(`${API_URL}/analytics`)
     .then(res => res.ok ? res.json() : Promise.reject())
     .then(data => setAnalytics(data))
     .catch(() => {});
@@ -95,7 +97,7 @@ function App() {
       if (data.type === "FRIEND_REQUEST_RECEIVED") {
         const currentUsername = usernameRef.current;
         if (currentUsername) {
-          fetch(`http://localhost:3001/friends/requests/${currentUsername}`)
+          fetch(`${API_URL}/friends/requests/${currentUsername}`)
             .then(res => res.json())
             .then(requestsData => setFriendRequests(requestsData))
             .catch(() => {});
@@ -105,7 +107,7 @@ function App() {
       if (data.type === "FRIEND_REQUEST_ACCEPTED") {
         const currentUsername = usernameRef.current;
         if (currentUsername) {
-          fetch(`http://localhost:3001/friends/${currentUsername}`)
+          fetch(`${API_URL}/friends/${currentUsername}`)
             .then(res => res.json())
             .then(friendsData => setFriends(friendsData))
             .catch(() => {});
@@ -156,7 +158,7 @@ function App() {
   };
 
   const fetchFriends = async () => {
-    const res = await fetch(`http://localhost:3001/friends/${username}`);
+    const res = await fetch(`${API_URL}/friends/${username}`);
     const data = await res.json();
     setFriends(data);
   };
@@ -188,7 +190,7 @@ function App() {
   const sendFriendRequest = async () => {
     if (!username || !friendName) return;
     try {
-      const response = await fetch("http://localhost:3001/friends/request", {
+      const response = await fetch(`${API_URL}/friends/request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ from: username, to: friendName })
@@ -208,7 +210,7 @@ function App() {
   const fetchFriendRequests = async () => {
     if (!username) return;
     try {
-      const res = await fetch(`http://localhost:3001/friends/requests/${username}`);
+      const res = await fetch(`${API_URL}/friends/requests/${username}`);
       const data = await res.json();
       setFriendRequests(data);
     } catch (err) {
@@ -218,7 +220,7 @@ function App() {
 
   const acceptFriendRequest = async (requestId) => {
     try {
-      const response = await fetch("http://localhost:3001/friends/accept", {
+      const response = await fetch(`${API_URL}/friends/accept`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ requestId })
@@ -235,7 +237,7 @@ function App() {
 
   const declineFriendRequest = async (requestId) => {
     try {
-      await fetch("http://localhost:3001/friends/decline", {
+      await fetch(`${API_URL}/friends/decline`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ requestId })

@@ -1,7 +1,10 @@
 let socket = null;
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
+const wsUrl = backendUrl.replace(/^http/, "ws");
+
 export function connectSocket() {
-  socket = new WebSocket("ws://localhost:3001");
+  socket = new WebSocket(wsUrl);
 
   socket.onopen = () => {
     console.log("WebSocket connected");
