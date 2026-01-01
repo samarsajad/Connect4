@@ -347,6 +347,23 @@ function App() {
                 </button>
               </div>
 
+              {friendRequests.length > 0 && (
+                <div className="friend-requests-section" style={{ marginBottom: '20px' }}>
+                  <h4 style={{ margin: '10px 0' }}>Friend Requests</h4>
+                  <ul className="friends-list">
+                    {friendRequests.map((req) => (
+                      <li key={req.id} className="friend-item" style={{ justifyContent: 'space-between' }}>
+                        <span className="friend-name">{req.from_user}</span>
+                        <div style={{ display: 'flex', gap: '5px' }}>
+                          <button className="btn-primary btn-small" onClick={() => acceptFriendRequest(req.id)}>Accept</button>
+                          <button className="btn-secondary btn-small" onClick={() => declineFriendRequest(req.id)}>Decline</button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               {challengeStatus && (
                 <div className={`status-message ${challengeStatus.startsWith("Error") ? "status-error" : "status-success"}`}>
                   {challengeStatus}

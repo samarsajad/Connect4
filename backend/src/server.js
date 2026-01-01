@@ -263,3 +263,97 @@ app.post("/friends/request", async (req, res) => {
     res.status(500).json({ error: "Server error: " + e.message });
   }
 });
+
+app.get("/friends/requests/:username", async (req, res) => {
+  const { username } = req.params;
+  if (!username) return res.json([]);
+
+  try {
+    const result = await pool.query(
+      `SELECT id, from_user, created_at FROM friend_requests WHERE to_user = $1 AND status = 'pending'`,
+      [username]
+    );
+    res.json(result.rows);
+  } catch (e) {
+    console.error("fetch requests error:", e.message);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.post("/friends/accept", async (req, res) => {
+  const { requestId } = req.body;
+  if (!requestId) return res.status(400).json({ error: "Missing requestId" });
+
+  try {
+    // Get request details
+    const reqResult = await pool.query(
+      `SELECT from_user, to_user FROM friend_requests WHERE id = $1 AND status = 'pending'`,
+      [requestId]
+    );
+    if (reqResult.rows.length === 0) {
+      return res.status(404).json({ error: "Request not found or already handled" });
+    }
+    const { from_user, to_user } = reqResult.rows[0];
+
+    // Update request status
+    await pool.query(`UPDATE friend_requests SET status = 'accepted' WHERE id = $1`, [requestId]);
+
+    // Insert into friends (ensure user1 < user2 to avoid duplicates if we used that convention, 
+    // but here we just insert as is or handle uniqueness. 
+    // The setup-db has UNIQUE(user1, user2). 
+    // Let's insert LEAST/GREATEST to be safe and consistent.)
+    
+    const u1 = from_user < to_user ? from_user : to_user;
+    const u2 = from_user < to_user ? to_user : from_user;
+
+    await pool.query(
+      `INSERT INTO friends (user1, user2) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+      [u1, u2]
+    );
+
+    // Notify sender
+    const sock = onlineUsers.get(from_user);
+    if (sock) {
+      sock.send(JSON.stringify({ type: "FRIEND_REQUEST_ACCEPTED", from: to_user }));
+    }
+
+    res.json({ success: true });
+  } catch (e) {
+    console.error("accept friend error:", e.message);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.post("/friends/decline", async (req, res) => {
+  const { requestId } = req.body;
+  if (!requestId) return res.status(400).json({ error: "Missing requestId" });
+
+  try {
+    await pool.query(`UPDATE friend_requests SET status = 'declined' WHERE id = $1`, [requestId]);
+    res.json({ success: true });
+  } catch (e) {
+    console.error("decline friend error:", e.message);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.get("/friends/:username", async (req, res) => {
+  const { username } = req.params;
+  if (!username) return res.json([]);
+
+  try {
+    const result = await pool.query(
+      `
+      SELECT user2 AS friend FROM friends WHERE user1 = $1
+      UNION
+      SELECT user1 AS friend FROM friends WHERE user2 = $1
+      `,
+      [username]
+    );
+    res.json(result.rows.map(r => r.friend));
+  } catch (e) {
+    console.error("fetch friends error:", e.message);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
