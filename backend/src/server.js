@@ -12,6 +12,10 @@ const { connectProducer } = require("./kafka/producer");
 const { startConsumer } = require("./kafka/consumer");
 const { onlineUsers } = require("./store");
 
+// Ensure DB tables exist
+const setupDB = require("./setup-db");
+setupDB();
+
 const app = express();
 
 /* security */
@@ -256,6 +260,6 @@ app.post("/friends/request", async (req, res) => {
     res.json({ success: true });
   } catch (e) {
     console.error("friend request error:", e.message);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error: " + e.message });
   }
 });
