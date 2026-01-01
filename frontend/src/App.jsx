@@ -318,21 +318,6 @@ function App() {
               <button className="btn-primary" onClick={joinGame}>Find Random Match</button>
             </div>
 
-            {friendRequests.length > 0 && (
-              <div className="card">
-                <h3>Friend Requests ({friendRequests.length})</h3>
-                {friendRequests.map((req) => (
-                  <div key={req.id} className="friend-request-item">
-                    <span><strong>{req.from_user}</strong> wants to be your friend</span>
-                    <div className="friend-request-buttons">
-                      <button className="btn-success btn-small" onClick={() => acceptFriendRequest(req.id)}>Accept</button>
-                      <button className="btn-danger btn-small" onClick={() => declineFriendRequest(req.id)}>Decline</button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
             <div className="card">
               <h3>Friends ({friends.length})</h3>
               <div className="input-group">
