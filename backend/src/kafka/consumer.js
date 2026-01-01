@@ -1,11 +1,20 @@
 require("dotenv").config();
 
+// Early exit if Kafka is not configured
+if (!process.env.KAFKA_BROKERS) {
+  console.log("Kafka consumer disabled (no brokers configured)");
+  module.exports = {
+    startConsumer: async () => {}
+  };
+  return;
+}
+
 const { Kafka } = require("kafkajs");
 const pool = require("../db");
 
 const kafka = new Kafka({
   clientId: "connect4-analytics",
-  brokers: ["localhost:9092"]
+  brokers: process.env.KAFKA_BROKERS.split(",")
 });
 
 const consumer = kafka.consumer({ groupId: "analytics-group" });

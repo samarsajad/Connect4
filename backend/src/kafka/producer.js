@@ -1,10 +1,20 @@
 require("dotenv").config();
 
+// Early exit if Kafka is not configured
+if (!process.env.KAFKA_BROKERS) {
+  console.log("Kafka disabled (no brokers configured)");
+  module.exports = {
+    connectProducer: async () => {},
+    emitEvent: async () => {}
+  };
+  return;
+}
+
 const { Kafka } = require("kafkajs");
 
 const kafka = new Kafka({
   clientId: "connect4-server",
-  brokers: ["localhost:9092"]
+  brokers: process.env.KAFKA_BROKERS.split(",")
 });
 
 const producer = kafka.producer();
@@ -28,12 +38,6 @@ async function emitEvent(type, payload) {
     ]
   });
 }
-if (!process.env.KAFKA_BROKERS) {
-  console.log("Kafka disabled (no brokers configured)");
-  module.exports.emitEvent = async () => {};
-  return;
-}
-
 
 module.exports = {
   connectProducer,
