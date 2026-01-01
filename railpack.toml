@@ -1,0 +1,5 @@
+[build]
+builder = "nodejs"
+
+[deploy]
+startCommand = "sh start.sh"
