@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const http = require("http");
 const cors = require("cors");
@@ -89,7 +91,7 @@ app.get("/", (_, res) => {
 const server = http.createServer(app);
 setupWebSocket(server);
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 connectProducer();
 startConsumer();

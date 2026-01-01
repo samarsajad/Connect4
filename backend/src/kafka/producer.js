@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const { Kafka } = require("kafkajs");
 
 const kafka = new Kafka({
@@ -26,6 +28,12 @@ async function emitEvent(type, payload) {
     ]
   });
 }
+if (!process.env.KAFKA_BROKERS) {
+  console.log("Kafka disabled (no brokers configured)");
+  module.exports.emitEvent = async () => {};
+  return;
+}
+
 
 module.exports = {
   connectProducer,
