@@ -48,7 +48,7 @@ app.use("/friends/request", friendLimiter);
 const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
-      ? ["https://yourdomain.com"]
+      ? process.env.CORS_ORIGIN
       : [
           "http://localhost:5173",
           "http://localhost:3000",
@@ -56,6 +56,7 @@ const corsOptions = {
         ],
   credentials: true
 };
+
 app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "10kb" }));
@@ -93,8 +94,14 @@ setupWebSocket(server);
 
 const PORT = process.env.PORT || 3001;
 
-connectProducer();
-startConsumer();
+if (process.env.KAFKA_BROKERS) {
+  connectProducer();
+  startConsumer();
+  console.log("Kafka enabled");
+} else {
+  console.log("Kafka disabled (no brokers configured)");
+}
+
 
 server.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
