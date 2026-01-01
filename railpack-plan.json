@@ -1,0 +1,21 @@
+{
+  "version": "1",
+  "services": [
+    {
+      "name": "backend",
+      "runtime": "nodejs",
+      "build": {
+        "commands": [
+          "cd backend",
+          "npm install"
+        ]
+      },
+      "deploy": {
+        "commands": [
+          "cd backend",
+          "node src/server.js"
+        ]
+      }
+    }
+  ]
+}
