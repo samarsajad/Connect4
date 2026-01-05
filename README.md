@@ -70,7 +70,20 @@ npm install
 ```
 
 
-#### Kafka Setup (Local Only)
+- **Note:** Kafka analytics are implemented and fully functional in local development environments only.
+- Due to cloud Kafka providers requiring a paid subscription, the deployed version does not include Kafka analytics.
+- For local development, Kafka can be run using Docker and Windows Subsystem for Linux (WSL).
+- Default Kafka configs are in `src/kafka/producer.js` and `src/kafka/consumer.js`.
+- To use analytics, start a local Kafka instance (e.g., via Docker Compose) before running the backend.
+
+#### Running Kafka Locally with Docker Compose
+- A sample `docker-compose.yml` is provided in the project root.
+- To start Kafka and Zookeeper locally, run:
+  ```sh
+  docker-compose up -d
+  ```
+- This will start both Kafka (on port 9092) and Zookeeper (on port 2181).
+- Make sure Docker is installed and running on your system.
 - **Note:** Kafka analytics are implemented and fully functional in local development environments only.
 - Due to cloud Kafka providers requiring a paid subscription, the deployed version does not include Kafka analytics.
 - For local development, Kafka can be run using Docker and Windows Subsystem for Linux (WSL).
