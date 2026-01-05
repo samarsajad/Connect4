@@ -77,7 +77,7 @@ npm install
 - To use analytics, start a local Kafka instance (e.g., via Docker Compose) before running the backend.
 
 #### Running Kafka Locally with Docker Compose
-- A sample `docker-compose.yml` is provided in the project root.
+- Create a `docker-compose.yml`.
 - To start Kafka and Zookeeper locally, run:
   ```sh
   docker-compose up -d
