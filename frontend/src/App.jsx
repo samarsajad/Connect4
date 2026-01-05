@@ -33,11 +33,11 @@ function App() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [friends, setFriends] = useState([]);
   const [friendName, setFriendName] = useState("");
-  const [friendRequests, setFriendRequests] = useState([]);
+  const [friendReq, setfriendReq] = useState([]);
   const [challenge, setChallenge] = useState(null);
-  const [challengeStatus, setChallengeStatus] = useState(null);
+  const [challengeStat, setchallengeStat] = useState(null);
   const [analytics, setAnalytics] = useState(null);
-  const [opponentStatus, setOpponentStatus] = useState(null);
+  const [opponentStat, setopponentStat] = useState(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
 
   useEffect(() => {
@@ -53,15 +53,15 @@ function App() {
       fetchLeaderboard(setLeaderboard);
 
       if (data.type === "OPPONENT_DISCONNECTED") {
-        setOpponentStatus("Opponent disconnected. Waiting 30s...");
+        setopponentStat("Opponent disconnected. Waiting 30s...");
       }
 
       if (data.type === "OPPONENT_RECONNECTED") {
-        setOpponentStatus(null);
+        setopponentStat(null);
       }
 
       if (data.type === "OPPONENT_FORFEITED") {
-        setOpponentStatus(null);
+        setopponentStat(null);
         setGameOver("YOU WIN! (Opponent forfeited)");
         fetchAnalytics(setAnalytics);
       }
@@ -72,7 +72,7 @@ function App() {
         setBoard(data.board);
         setTurn(data.turn);
         setStatus(`${usernameRef.current} vs ${data.opponent}`);
-        setOpponentStatus(null);
+        setopponentStat(null);
       }
 
       if (data.type === "CHALLENGE_RECEIVED") {
@@ -81,17 +81,17 @@ function App() {
 
       if (data.type === "CHALLENGE_DECLINED") {
         alert(`Challenge declined by ${data.by}`);
-        setChallengeStatus(null);
+        setchallengeStat(null);
       }
 
       if (data.type === "CHALLENGE_SENT") {
-        setChallengeStatus(`Challenge sent to ${data.to}!`);
-        setTimeout(() => setChallengeStatus(null), 3000);
+        setchallengeStat(`Challenge sent to ${data.to}!`);
+        setTimeout(() => setchallengeStat(null), 3000);
       }
 
       if (data.type === "ERROR") {
-        setChallengeStatus(`Error: ${data.message}`);
-        setTimeout(() => setChallengeStatus(null), 3000);
+        setchallengeStat(`Error: ${data.message}`);
+        setTimeout(() => setchallengeStat(null), 3000);
       }
 
       if (data.type === "FRIEND_REQUEST_RECEIVED") {
@@ -99,7 +99,7 @@ function App() {
         if (currentUsername) {
           fetch(`${API_URL}/friends/requests/${currentUsername}`)
             .then(res => res.json())
-            .then(requestsData => setFriendRequests(requestsData))
+            .then(requestsData => setfriendReq(requestsData))
             .catch(() => {});
         }
       }
@@ -123,7 +123,7 @@ function App() {
       if (data.type === "MATCH_START") {
         playerSymbol = data.symbol;
         currentGameId = data.gameId;
-        setChallengeStatus(null);
+        setchallengeStat(null);
         setBoard(Array(6).fill(null).map(() => Array(7).fill(null)));
         setTurn("P1");
         setStatus(`${usernameRef.current} vs ${data.opponent}`);
@@ -136,7 +136,7 @@ function App() {
 
       if (data.type === "GAME_OVER") {
         setBoard(data.board);
-        setOpponentStatus(null);
+        setopponentStat(null);
         fetchAnalytics(setAnalytics);
         if (data.winner) {
           setGameOver(data.winner === playerSymbol ? "YOU WIN!" : "YOU LOSE!");
@@ -187,7 +187,7 @@ function App() {
     setChallenge(null);
   };
 
-  const sendFriendRequest = async () => {
+  const sendFriendReq = async () => {
     if (!username || !friendName) return;
     try {
       const response = await fetch(`${API_URL}/friends/request`, {
@@ -207,18 +207,18 @@ function App() {
     }
   };
 
-  const fetchFriendRequests = async () => {
+  const fetchfriendReq = async () => {
     if (!username) return;
     try {
       const res = await fetch(`${API_URL}/friends/requests/${username}`);
       const data = await res.json();
-      setFriendRequests(data);
+      setfriendReq(data);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const acceptFriendRequest = async (requestId) => {
+  const acceptFriendReq = async (requestId) => {
     try {
       const response = await fetch(`${API_URL}/friends/accept`, {
         method: "POST",
@@ -228,21 +228,21 @@ function App() {
       const result = await response.json();
       if (result.success) {
         fetchFriends();
-        fetchFriendRequests();
+        fetchfriendReq();
       }
     } catch (err) {
       console.error(err);
     }
   };
 
-  const declineFriendRequest = async (requestId) => {
+  const declineFriendReq = async (requestId) => {
     try {
       await fetch(`${API_URL}/friends/decline`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ requestId })
       });
-      fetchFriendRequests();
+      fetchfriendReq();
     } catch (err) {
       console.error(err);
     }
@@ -252,7 +252,7 @@ function App() {
     usernameRef.current = username;
     if (username) {
       fetchFriends();
-      fetchFriendRequests();
+      fetchfriendReq();
     }
   }, [username]);
 
@@ -274,14 +274,14 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <div className="container">
       {challenge && (
         <>
-          <div className="modal-overlay" />
-          <div className="challenge-modal">
+          <div className="modal" />
+          <div className="ch-modal">
             <h3>Challenge!</h3>
             <p><strong>{challenge.from}</strong> wants to play!</p>
-            <div className="challenge-modal-buttons">
+            <div className="ch-m-btn">
               <button className="btn-success" onClick={acceptChallenge}>Accept</button>
               <button className="btn-danger" onClick={declineChallenge}>Decline</button>
             </div>
@@ -304,7 +304,7 @@ function App() {
                 onChange={(e) => setUsername(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && username && goOnline()}
               />
-              <button className="btn-primary" onClick={goOnline} disabled={!username}>
+              <button className="btn-pri" onClick={goOnline} disabled={!username}>
                 Go Online
               </button>
             </div>
@@ -315,7 +315,7 @@ function App() {
           <>
             <div className="card welcome-section">
               <h2>Welcome, <span className="welcome-username">{username}</span>!</h2>
-              <button className="btn-primary" onClick={joinGame}>Find Random Match</button>
+              <button className="btn-pri" onClick={joinGame}>Find Random Match</button>
             </div>
 
             <div className="card">
@@ -325,23 +325,23 @@ function App() {
                   placeholder="Add friend by username"
                   value={friendName}
                   onChange={(e) => setFriendName(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && friendName && sendFriendRequest()}
+                  onKeyPress={(e) => e.key === 'Enter' && friendName && sendFriendReq()}
                 />
-                <button className="btn-secondary" onClick={sendFriendRequest} disabled={!friendName}>
+                <button className="btn-sec" onClick={sendFriendReq} disabled={!friendName}>
                   Send Request
                 </button>
               </div>
 
-              {friendRequests.length > 0 && (
-                <div className="friend-requests-section" style={{ marginBottom: '20px' }}>
+              {friendReq.length > 0 && (
+                <div className="fr-sec" style={{ marginBottom: '20px' }}>
                   <h4 style={{ margin: '10px 0' }}>Friend Requests</h4>
-                  <ul className="friends-list">
-                    {friendRequests.map((req) => (
-                      <li key={req.id} className="friend-item" style={{ justifyContent: 'space-between' }}>
-                        <span className="friend-name">{req.from_user}</span>
+                  <ul className="fr-list">
+                    {friendReq.map((req) => (
+                      <li key={req.id} className="fr-item" style={{ justifyContent: 'space-between' }}>
+                        <span className="fr-name">{req.from_user}</span>
                         <div style={{ display: 'flex', gap: '5px' }}>
-                          <button className="btn-primary btn-small" onClick={() => acceptFriendRequest(req.id)}>Accept</button>
-                          <button className="btn-secondary btn-small" onClick={() => declineFriendRequest(req.id)}>Decline</button>
+                          <button className="btn-pri btn-small" onClick={() => acceptFriendReq(req.id)}>Accept</button>
+                          <button className="btn-sec btn-small" onClick={() => declineFriendReq(req.id)}>Decline</button>
                         </div>
                       </li>
                     ))}
@@ -349,23 +349,23 @@ function App() {
                 </div>
               )}
 
-              {challengeStatus && (
-                <div className={`status-message ${challengeStatus.startsWith("Error") ? "status-error" : "status-success"}`}>
-                  {challengeStatus}
+              {challengeStat && (
+                <div className={`status-message ${challengeStat.startsWith("Error") ? "status-error" : "status-success"}`}>
+                  {challengeStat}
                 </div>
               )}
 
               {friends.length === 0 ? (
                 <p style={{ opacity: 0.7 }}>No friends yet. Add someone to play together!</p>
               ) : (
-                <ul className="friends-list">
+                <ul className="fr-list">
                   {friends.map((f) => (
-                    <li key={f} className="friend-item">
-                      <div className="friend-name">
+                    <li key={f} className="fr-item">
+                      <div className="fr-name">
                         <span className="online-dot"></span>
                         {f}
                       </div>
-                      <button className="btn-primary btn-small" onClick={() => challengeFriend(f)}>
+                      <button className="btn-pri btn-small" onClick={() => challengeFriend(f)}>
                          Challenge
                       </button>
                     </li>
@@ -385,14 +385,14 @@ function App() {
             {friends.length > 0 && (
               <>
                 <h3>Or challenge a friend:</h3>
-                <ul className="friends-list">
+                <ul className="fr-list">
                   {friends.map((f) => (
-                    <li key={f} className="friend-item">
-                      <div className="friend-name">
+                    <li key={f} className="fr-item">
+                      <div className="fr-name">
                         <span className="online-dot"></span>
                         {f}
                       </div>
-                      <button className="btn-primary btn-small" onClick={() => challengeFriend(f)}>
+                      <button className="btn-pri btn-small" onClick={() => challengeFriend(f)}>
                          Challenge
                       </button>
                     </li>
@@ -414,8 +414,8 @@ function App() {
               <p>Turn: <strong style={{ color: turn === 'P1' ? '#ff6b6b' : '#feca57' }}>
                 {turn === 'P1' ? '🔴 Red' : '🟡 Yellow'}
               </strong></p>
-              {opponentStatus && (
-                <div className="opponent-status">{opponentStatus}</div>
+              {opponentStat && (
+                <div className="opponent-status">{opponentStat}</div>
               )}
             </div>
             {gameOver && (
@@ -429,8 +429,8 @@ function App() {
       </div>
 
       {/* Leaderboard */}
-      <div className="leaderboard-sidebar">
-        <div className="sidebar-tabs">
+      <div className="lb-sb">
+        <div className="sb-tabs">
           <button 
             className={!showAnalytics ? 'tab-active' : ''} 
             onClick={() => setShowAnalytics(false)}
@@ -447,7 +447,7 @@ function App() {
 
         {!showAnalytics ? (
           <>
-            <table className="leaderboard-table">
+            <table className="lb-table">
               <thead>
                 <tr>
                   <th>#</th>
@@ -484,17 +484,20 @@ function App() {
           <div className="analytics-panel">
             {analytics ? (
               <>
+                <div style={{background:'#fffbe6',border:'1px solid #ffe58f',padding:'10px',marginBottom:'16px',borderRadius:'6px',color:'#ad8b00'}}>
+                  <strong>Note:</strong> Kafka analytics are implemented and work locally with Docker/WSL. Cloud deployment does not include analytics due to paid Kafka service requirements. Please test analytics locally to see full functionality.
+                </div>
                 <div className="analytics-stat">
                   <span className="stat-label">Total Games</span>
-                  <span className="stat-value">{analytics.overallStats?.total_games || 0}</span>
+                  <span className="stat-val">{analytics.overallStats?.total_games || 0}</span>
                 </div>
                 <div className="analytics-stat">
                   <span className="stat-label">Avg Duration</span>
-                  <span className="stat-value">{analytics.overallStats?.avg_duration_seconds || 0}s</span>
+                  <span className="stat-val">{analytics.overallStats?.avg_duration_seconds || 0}s</span>
                 </div>
 
                 <h4> Top Winners</h4>
-                <table className="leaderboard-table">
+                <table className="lb-table">
                   <thead>
                     <tr>
                       <th>Player</th>

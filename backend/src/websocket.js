@@ -84,7 +84,7 @@ async function endGame(game, winner) {
   games.delete(game.id);
 }
 
-// called when a player doesn't reconnect within 30s
+// Reconnection logic
 async function forfeitGame(gameId, disconnectedSymbol) {
   const game = games.get(gameId);
   if (!game) return;
@@ -124,7 +124,7 @@ function setupWebSocket(server) {
         return
       }
 
-      // GO_ONLINE - register without joining matchmaking
+      // GO_ONLINE 
       if (msg.type === "GO_ONLINE") {
         const username = sanitizeUsername(msg.username);
         if (!username) {
@@ -171,7 +171,7 @@ function setupWebSocket(server) {
         return;
       }
 
-      // JOIN - enter matchmaking queue
+      // JOIN 
       if (msg.type === "JOIN") {
         const username = sanitizeUsername(msg.username);
         if (!username) {
@@ -187,7 +187,7 @@ function setupWebSocket(server) {
           waitingPlayer.socket = ws;
           waitingPlayer.username = username;
 
-          // after 10s with no opponent, start bot game
+          // Bot match after 10s
           waitingPlayer.timeout = setTimeout(() => {
             const gameId = uuidv4();
             const game = {
@@ -238,7 +238,7 @@ function setupWebSocket(server) {
           return;
         }
 
-        // someone is waiting - match them
+        // Matching logic
         clearTimeout(waitingPlayer.timeout);
 
         const player1 = { socket: waitingPlayer.socket, username: waitingPlayer.username };

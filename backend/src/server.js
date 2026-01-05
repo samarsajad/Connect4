@@ -12,7 +12,7 @@ const { connectProducer } = require("./kafka/producer");
 const { startConsumer } = require("./kafka/consumer");
 const { onlineUsers } = require("./store");
 
-// Ensure DB tables exist
+
 const setupDB = require("./setup-db");
 setupDB();
 
@@ -298,10 +298,6 @@ app.post("/friends/accept", async (req, res) => {
     // Update request status
     await pool.query(`UPDATE friend_requests SET status = 'accepted' WHERE id = $1`, [requestId]);
 
-    // Insert into friends (ensure user1 < user2 to avoid duplicates if we used that convention, 
-    // but here we just insert as is or handle uniqueness. 
-    // The setup-db has UNIQUE(user1, user2). 
-    // Let's insert LEAST/GREATEST to be safe and consistent.)
     
     const u1 = from_user < to_user ? from_user : to_user;
     const u2 = from_user < to_user ? to_user : from_user;

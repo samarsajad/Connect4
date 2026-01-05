@@ -11,7 +11,7 @@ body {
   color: #fff;
 }
 
-.app-container {
+.container {
   display: flex;
   min-height: 100vh;
 }
@@ -92,22 +92,22 @@ button {
   transition: all 0.3s ease;
 }
 
-.btn-primary {
+.btn-pri {
   background: linear-gradient(135deg, #ff6b6b, #ee5a24);
   color: white;
 }
 
-.btn-primary:hover:not(:disabled) {
+.btn-pri:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 5px 20px rgba(238, 90, 36, 0.4);
 }
 
-.btn-secondary {
+.btn-sec {
   background: linear-gradient(135deg, #48dbfb, #0abde3);
   color: white;
 }
 
-.btn-secondary:hover:not(:disabled) {
+.btn-sec:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 5px 20px rgba(10, 189, 227, 0.4);
 }
@@ -153,11 +153,11 @@ button:disabled {
 }
 
 /* Friends List */
-.friends-list {
+.fr-list {
   list-style: none;
 }
 
-.friend-item {
+.fr-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -168,11 +168,11 @@ button:disabled {
   transition: all 0.3s ease;
 }
 
-.friend-item:hover {
+.fr-item:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.friend-name {
+.fr-name {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -212,7 +212,7 @@ button:disabled {
 }
 
 /* Leaderboard */
-.leaderboard-sidebar {
+.lb-sb {
   width: 320px;
   background: rgba(0, 0, 0, 0.4);
   padding: 20px;
@@ -224,7 +224,7 @@ button:disabled {
   overflow-y: auto;
 }
 
-.leaderboard-sidebar h2 {
+.lb-sb h2 {
   color: #feca57;
   font-size: 1.4rem;
   margin-bottom: 20px;
@@ -235,12 +235,12 @@ button:disabled {
   gap: 8px;
 }
 
-.leaderboard-table {
+.lb-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.leaderboard-table th {
+.lb-table th {
   background: rgba(255, 255, 255, 0.1);
   padding: 12px 8px;
   text-align: left;
@@ -249,13 +249,13 @@ button:disabled {
   text-transform: uppercase;
 }
 
-.leaderboard-table td {
+.lb-table td {
   padding: 12px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 0.9rem;
 }
 
-.leaderboard-table tr:hover td {
+.lb-table tr:hover td {
   background: rgba(255, 255, 255, 0.05);
 }
 
@@ -268,7 +268,7 @@ button:disabled {
 .league-bronze { color: #cd7f32; }
 
 /* Challenge  */
-.challenge-modal {
+.ch-modal {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -283,23 +283,23 @@ button:disabled {
   min-width: 300px;
 }
 
-.challenge-modal h3 {
+.ch-modal h3 {
   color: #feca57;
   margin-bottom: 10px;
 }
 
-.challenge-modal p {
+.ch-modal p {
   margin-bottom: 20px;
   font-size: 1.1rem;
 }
 
-.challenge-modal-buttons {
+.ch-m-btn {
   display: flex;
   gap: 10px;
   justify-content: center;
 }
 
-.modal-overlay {
+.modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -385,14 +385,14 @@ button:disabled {
     margin-right: 280px;
   }
   
-  .leaderboard-sidebar {
+  .lb-sb {
     width: 260px;
     padding: 15px;
   }
 }
 
 @media (max-width: 900px) {
-  .app-container {
+  .container {
     flex-direction: column;
   }
   
@@ -401,7 +401,7 @@ button:disabled {
     max-width: 100%;
   }
   
-  .leaderboard-sidebar {
+  .lb-sb {
     position: relative;
     width: 100%;
     height: auto;
@@ -429,13 +429,13 @@ button:disabled {
 }
 
 /* Sidebar Tabs */
-.sidebar-tabs {
+.sb-tabs {
   display: flex;
   margin-bottom: 15px;
   gap: 5px;
 }
 
-.sidebar-tabs button {
+.sb-tabs button {
   flex: 1;
   padding: 8px 12px;
   font-size: 0.85rem;
@@ -447,11 +447,11 @@ button:disabled {
   transition: all 0.2s;
 }
 
-.sidebar-tabs button:hover {
+.sb-tabs button:hover {
   background: rgba(255, 255, 255, 0.15);
 }
 
-.sidebar-tabs button.tab-active {
+.sb-tabs button.tab-active {
   background: linear-gradient(90deg, #6366f1, #8b5cf6);
   color: white;
   border-color: transparent;
@@ -475,7 +475,7 @@ button:disabled {
   color: rgba(255, 255, 255, 0.7);
 }
 
-.stat-value {
+.stat-val {
   font-weight: bold;
   color: #48dbfb;
   font-size: 1.1rem;
